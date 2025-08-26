@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TableStatuses {
+  active
+  not_active
+  pending
+  approve
+}
+
+enum LogTypes {
+  create
+  update
+  delete
+  viewed
+}
+
+enum Role {
+  OWNER 
+  ADMIN 
+  MEMBER 
+  OBSERVER
+  USER
+}
+
+model User {
+  id                String           @id @default(cuid())
+  email             String           @unique
+  name              String?
+  password          String
+  role              Role
+  refreshTokens     RefreshToken[]             
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique // we’ll hash this in real-world apps
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Task{
+  id                String            @id @default(cuid())
+  title             String            
+  description       String
+  taskStatusId      String
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  startDate         DateTime
+  endDate           DateTime
+  status            TaskStatus?
+  checklist         CheckList[]
+  comments          Comments[]
+}
+
+
+model TaskStatus {
+  id                String            @id @default(cuid())
+  name              String
+  status            TableStatuses     @default(active)
+  taskId            String            @unique
+  task              Task              @relation(fields: [taskId], references: [id])            
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model CheckList{
+  id                String            @id @default(cuid())
+  taskId            String            
+  task              Task              @relation(fields: [taskId], references: [id])
+  status            TableStatuses
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  items             CheckListItems[]
+}
+
+
+model CheckListItems {
+  id                String            @id @default(cuid())
+  name              String
+  task              String
+  checklistId       String
+  checklist         CheckList          @relation(fields: [checklistId], references: [id])
+  status            TableStatuses
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model Comments {
+  id                String            @id @default(cuid())
+  taskid            String      
+  task              Task              @relation(fields: [taskid], references: [id])
+  status            TableStatuses     
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}

@@ -1,0 +1,34 @@
+@use "../variables" as v;
+
+.draggable{
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+
+
+  .draggable-item{
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #181818;
+    padding: 4px;
+    margin-bottom: 4px;
+
+    p {
+      max-width: 300px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+  }
+
+
+  .el-button{
+    font-weight: bold;
+    width: 100%;
+  }
+}

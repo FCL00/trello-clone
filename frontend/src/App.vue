@@ -1,4 +1,16 @@
 <template>
+  <router-view />
+</template>
+
+<script lang="ts" setup>
+import { RouterView } from 'vue-router';
+</script>
+
+<style>
+
+</style>
+
+<!-- <template>
   <form @submit.prevent="handleSubmit">
     <input type="text" name="email" placeholder="email" v-model="email" autocomplete="off"/>
     <input type="text" name="name" placeholder="name" v-model="name" autocomplete="off"/>
@@ -44,4 +56,4 @@ form > * {
   padding: 20px;
   margin-bottom: 20px;
 }
-</style>
+</style> -->

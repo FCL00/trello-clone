@@ -7,11 +7,12 @@
 
 body {
   font-family: "Poppins", sans-serif;
+ ;
 }
 
 .flex{
   display: flex;
-  gap: 2px;
+  gap: 12px;
 }
 
 .flex-center{
@@ -21,4 +22,7 @@ body {
   gap: 12px;
 }
 
+.max-w-sm{
+  max-width: 500px;
+}
 

@@ -5,6 +5,20 @@
   display: flex;
   gap: 12px;
 
+   h3{
+    max-width: 300px;
+   }
+
+  .el-card{
+    height: fit-content;
+    max-width: 100%;
+  }
+
+   .el-button{
+    font-weight: bold;
+    width: 100%;
+  }
+
 
   .draggable-item{
     cursor: pointer;
@@ -12,9 +26,10 @@
     justify-content: space-between;
     align-items: center;
     border-radius: 4px;
-    border: 1px solid #181818;
+    border: 1px solid #303030;
     padding: 4px;
     margin-bottom: 4px;
+
 
     p {
       max-width: 300px;
@@ -22,13 +37,14 @@
 
     button {
       cursor: pointer;
+      outline: none;
+      border: none;
+      padding: 4px;
+      border-radius: 4px;
     }
 
   }
 
 
-  .el-button{
-    font-weight: bold;
-    width: 100%;
-  }
+
 }

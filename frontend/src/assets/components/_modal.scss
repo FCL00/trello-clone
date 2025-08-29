@@ -1,0 +1,22 @@
+$rows: 2;
+
+.modal{
+  h1{
+    font-size: 32px;
+    font-weight: bold;
+  }
+
+  .el-input{
+    height: 50px;
+    font-size: 32px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat($rows, 1fr);
+
+    .grid-row{
+
+    }
+  }
+}

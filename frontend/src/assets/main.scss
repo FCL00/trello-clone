@@ -6,15 +6,21 @@
 
 // components
 @use "components/draggable";
+@use "components/modal";
+@use "components/hero";
 
+.main-content{
+  padding: 20px;
 
-
-.container{
-  max-width: 1400px;
-  background-color: #121212;
-  margin: auto;
+  button{
+    padding: 12px;
+    color: white;
+    background-color: #121212;
+    outline: none;
+    border: 1px solid #303030;
+    border-radius: 4px;
+  }
 }
-
 
 // card
 .el-card{
@@ -36,4 +42,18 @@
 
 .h-screen{
   height: 100vh;
+}
+
+button,
+a{
+  cursor: pointer;
+}
+
+.container {
+  max-width : 1400px;
+  margin: 0px auto;
+}
+
+@media (max-width: 1400px){
+
 }

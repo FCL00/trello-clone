@@ -1,5 +1,9 @@
 @use "../variables" as v;
 
+#task{
+  padding: 20px;
+}
+
 .draggable{
   cursor: pointer;
   display: flex;
@@ -32,7 +36,7 @@
 
 
     p {
-      max-width: 300px;
+      width: 300px;
     }
 
     button {

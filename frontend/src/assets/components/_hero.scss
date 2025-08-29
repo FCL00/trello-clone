@@ -1,0 +1,40 @@
+
+
+#hero{
+  padding: 32px 20px;
+
+  h1{
+    font-size: 3rem;
+    color: white;
+    width: 756px;
+  }
+
+  p {
+    color: white;
+    width: 756px;
+  }
+
+  button{
+    padding: 12px;
+    border-radius: 4px;
+    outline: none;
+    border: none;
+    background-color: #0065FF;
+    color: white;
+    width: 200px;
+    font-size: 18px;
+  }
+}
+
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+
+.flex{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

@@ -1,6 +1,6 @@
 <template>
 
-  <section class="flex h-screen" @click="isAnotherListInputOpen = false">
+  <section id="task" class="flex h-screen" @click="isAnotherListInputOpen = false">
     <!-- lists -->
     <draggable class="draggable" v-model="TaskList" group="tasks" item-key="id" @end="onDragEnd">
       <template #item="{ element }">
@@ -33,7 +33,7 @@
                      @change="onStatusChange(item)"
                   />
 
-                  <p @click="viewCardDetails">{{ item.title }}</p>
+                  <p @click="viewCardDetails(item)">{{ item.title }}</p>
                 </div>
                 <button @click="handleDelete(element, item)">
                   <el-icon><Delete /></el-icon>
@@ -93,31 +93,22 @@
       </el-button>
     </div>
 
-
-
+    <task-modal  v-if="selectedCheckListItem"  :task="selectedCheckListItem" v-model:isOpen="isTaskModalOpen" />
   </section>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import draggable from 'vuedraggable'
-
-interface ChecklistItem {
-  id: number
-  title: string
-  description: string
-  status: "ongoing" | "completed"
-}
-
-interface ListItem {
-  id: number
-  title: string
-  description: string
-  checklist: ChecklistItem[]
-}
+import type { ListItem, ChecklistItem} from "@/types/Task"
+import { BaseModal as TaskModal } from '@/components'
+import { ElMessage } from 'element-plus'
 
 const isAnotherListInputOpen = ref(false)
 const newListTitle = ref('')
+const isTaskModalOpen = ref(false)
+const selectedItem = ref<ListItem>()
+const selectedCheckListItem = ref<ChecklistItem>()
 
 const TaskList = ref<ListItem[]>([
   {
@@ -177,8 +168,11 @@ function addList() {
   isAnotherListInputOpen.value = false
 }
 
-function viewCardDetails() {
-  console.log('view card details')
+function viewCardDetails(item: ChecklistItem) {
+  if(!item) return ElMessage.error('No Selected Task...')
+  isTaskModalOpen.value = true
+  selectedCheckListItem.value = item
+  console.log('view card details', selectedItem.value)
 }
 
 function addCard(list: ListItem) {

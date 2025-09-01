@@ -1,28 +1,18 @@
 import type { Request, Response } from "express";
 import { TaskService } from "@/service/taskService.js";
+import type { Tasks } from "@/types/Task.js"
+import { successResponse, errorResponse } from "@/utils/responseHandler.js";
 
 export const getAllTask = async (req: Request, res: Response) => {
   try {
-    const task = await TaskService.findAll();
-    if (task)
-      return res.json({
-        status: "rejected",
-        message: "failed to fetch the task",
-      });
-
-    return res.json({
-      status: "fulfilled",
-      data: task || [],
-      message: "Successfully fetch tasks",
-    });
+    const userId = req.user?.id as string
+    const tasks = await TaskService.findAll(userId)
+    return successResponse(res, "Successfully fetched tasks", tasks)
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: "rejected",
-      errors: (error as Error).message || "Internal server error",
-    });
+    console.error(error)
+    return errorResponse(res, (error as Error).message || "Internal server error", null, 500)
   }
-};
+};  
 
 export const getTaskById = async (req: Request, res: Response) => {
   const taskId = req.params.id as string;
@@ -48,25 +38,39 @@ export const getTaskById = async (req: Request, res: Response) => {
 };
 
 export const createTask = async (req: Request, res: Response) => {
-  const validateInput = req.body;
-
   try {
+    const userId = req.user?.id as string
+    const validateInput = {userId: userId, ...req.body}
     const task = await TaskService.create(validateInput);
-    if (task)
+    if (!task)
       return res.json({
         status: "rejected",
         message: "failed to create the task",
       });
-    return res.json({
-      status: "success",
-      data: task,
-      message: "Successfull created a task",
-    });
+    return successResponse(res, "Successfully created a task", task, 201)
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: "rejected",
-      errors: (error as Error).message || "Internal server error",
-    });
+     return res.status(500).json({
+      success: false,
+      message: (error as Error).message || "Internal server error",
+      data: null,
+      validationErrors: null,
+    })
   }
 };
+
+
+export const updateTask = async (req: Request, res: Response ) => {
+  try {
+    
+  } catch(error) {
+
+  }
+}
+
+export const addCheckList = async (req: Request, res: Response ) => {
+  try{
+
+  } catch(error){
+    
+  }
+}

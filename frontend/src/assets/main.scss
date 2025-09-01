@@ -9,6 +9,16 @@
 @use "components/modal";
 @use "components/hero";
 
+a {
+  text-decoration: none;
+  color: black;
+}
+
+button,
+a{
+  cursor: pointer;
+}
+
 .main-content{
   padding: 20px;
 
@@ -40,13 +50,23 @@
   width: 32px;
 }
 
-.h-screen{
-  height: 100vh;
+.el-form{
+
+  h1 {
+    margin-bottom: 12px;
+  }
+
 }
 
-button,
-a{
-  cursor: pointer;
+.router-link-active .router-link-exact-active{
+  text-decoration: none;
+
+}
+
+
+
+.h-screen{
+  height: 100vh;
 }
 
 .container {

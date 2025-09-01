@@ -3,8 +3,10 @@ import type { Tasks } from "@/types/Task.js";
 
 
 export const TaskService = {
-    findAll: async () => {
-        return await prisma.task.findMany();
+    findAll: async (userId: string) => {
+        return await prisma.task.findMany({
+            where: { userId: userId}
+        });
     },  
 
     findById: async (id: string) => {

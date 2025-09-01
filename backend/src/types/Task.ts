@@ -1,7 +1,8 @@
 export interface Tasks {
   title: string
+  userId: string
   description: string
-  taskStatusId: string
   startDate: Date
   endDate: Date
+  status: "ongoing" | "completed" | "archive"
 }

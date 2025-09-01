@@ -140,6 +140,17 @@ function onDragEnd(id: number) {
   console.log("i will update the data here :" + id)
 }
 
+
+// async function onDragEnd() {
+//   // send updated order to backend
+//   const updatedOrder = tasks.value.map((task, index) => ({
+//     id: task.id,
+//     position: index
+//   }))
+
+//   await axios.put("/api/task/reorder", { tasks: updatedOrder })
+// }
+
 function onStatusChange(item: ChecklistItem){
     item.status = item.status === 'completed' ? 'ongoing' : 'completed'
 }

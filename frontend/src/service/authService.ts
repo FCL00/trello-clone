@@ -1,5 +1,6 @@
-import api from './api'
 
+import api from './api'
+import { ElMessage } from 'element-plus'
 export interface SignInResponse {
   accessToken: string
   user: {
@@ -10,13 +11,15 @@ export interface SignInResponse {
   }
 }
 
+
 export default {
   async signIn(email: string, password: string) {
     try {
       const res = await api.post('/auth/sign-in', { email, password })
       return res.data
     } catch (error) {
-      console.log(error)
+      // messageError = (error as Error).message
+      ElMessage.error("Invalid Credentials")
     }
   },
 
@@ -29,8 +32,13 @@ export default {
     }
   },
 
-  getMe() {
-    return api.get('/auth/me')
+  async getMe() {
+    try{
+      return await api.get('/auth/me')
+    }catch(error){
+      console.log(error)
+    }
+
   },
 
   refresh() {

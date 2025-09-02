@@ -23,8 +23,7 @@ enum TableStatuses {
 enum Status {
   ongoing
   completed
-  abandon
-  // cancelled
+  cancelled
   archive
 }
 
@@ -50,7 +49,8 @@ model User {
   password          String
   role              Role
   refreshTokens     RefreshToken[]
-  task              Task[]             
+  task              Task[]
+  comments          Comments[]             
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
 }
@@ -77,48 +77,27 @@ model Task{
   startDate         DateTime
   endDate           DateTime
   status            Status            @default(ongoing)
-  checklist         CheckList[]
-  comments          Comments[]
+  checklistItem     CheckListItem []
 }
-
-
-// model TaskStatus {
-//   id                String            @id @default(cuid())
-//   name              String
-//   status            TableStatuses     @default(active)
-//   taskId            String            @unique
-//   task              Task              @relation(fields: [taskId], references: [id])            
-//   createdAt         DateTime          @default(now())
-//   updatedAt         DateTime          @updatedAt
-// }
-
-model CheckList{
-  id                String            @id @default(cuid())
-  taskId            String            
-  task              Task              @relation(fields: [taskId], references: [id])
-  status            TableStatuses
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  items             CheckListItems[]
-}
-
-
-model CheckListItems {
-  id                String            @id @default(cuid())
-  name              String
-  task              String
-  checklistId       String
-  checklist         CheckList          @relation(fields: [checklistId], references: [id])
-  status            TableStatuses
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+model CheckListItem {
+  id            String              @id @default(cuid())
+  taskId        String
+  task          Task                @relation(fields: [taskId], references: [id])
+  title         String              
+  description   String              
+  status        Status              @default(ongoing)
+  position      Int                 @default(0)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt 
+  comments      Comments[]
 }
 
 model Comments {
-  id                String            @id @default(cuid())
-  taskid            String      
-  task              Task              @relation(fields: [taskid], references: [id])
-  status            TableStatuses     
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  id              String          @id @default(cuid())
+  checklistItemId String?
+  checklistItem   CheckListItem?  @relation(fields: [checklistItemId], references: [id])
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  comment         String
+  createdAt       DateTime        @default(now())
 }

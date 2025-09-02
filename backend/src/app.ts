@@ -3,7 +3,6 @@ import express from "express"
 import cors from "cors";
 
 import errorMiddleware from "./middleware/error.middleware.js"
-import requireAuth from "./middleware/requireAuth.middleware.js"
 
 import authRouter from "./routes/auth.routes.js"
 import taskRouter from "./routes/task.routes.js"
@@ -28,7 +27,7 @@ app.use(cookieParser())
 
 // Routes
 app.use("/api/auth", authRouter)
-app.use('/api/task/', taskRouter)
+app.use('/api/tasks/', taskRouter)
 
 app.use(errorMiddleware)
 

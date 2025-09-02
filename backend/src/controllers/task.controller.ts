@@ -61,16 +61,40 @@ export const createTask = async (req: Request, res: Response) => {
 
 export const updateTask = async (req: Request, res: Response ) => {
   try {
-    
-  } catch(error) {
+    const taskId = req.params.id as string
+    const userId = req.user?.id as string
 
+    const existingTask = await TaskService.findById(taskId)
+
+    if(!existingTask || existingTask.userId !== userId){
+      return errorResponse(res, "Task not found or unauthorized", null, 404)
+    }
+
+    const updatedTask = await TaskService.update(taskId, req.body)
+    return successResponse(res, "Task updated successfully", updatedTask)
+
+  } catch(error) {
+    
+    return errorResponse(res, (error as Error).message || "Internal server error", null, 500)
   }
 }
 
-export const addCheckList = async (req: Request, res: Response ) => {
-  try{
 
-  } catch(error){
+export const deleteTask = async (req: Request, res: Response) => {
+  try {
+    const taskId = req.params.id as string
+    const userId = req.user?.id as string
+
+    const existingTask = await TaskService.findById(taskId)
+    if(!existingTask || existingTask.userId !== userId){
+      return errorResponse(res, "Task not found or unauthorized", null, 404)
+    }
+
+    await TaskService.delete(taskId)
+
+    return successResponse(res, "Task updated successfully")
     
+  } catch(error){
+    return errorResponse(res, (error as Error).message || "Internal server error", null, 500)
   }
 }

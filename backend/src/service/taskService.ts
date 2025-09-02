@@ -5,7 +5,9 @@ import type { Tasks } from "@/types/Task.js";
 export const TaskService = {
     findAll: async (userId: string) => {
         return await prisma.task.findMany({
-            where: { userId: userId}
+            where: { userId: userId},
+            include: { checklistItem: true },
+            orderBy: { position: "asc"}
         });
     },  
 
@@ -18,7 +20,7 @@ export const TaskService = {
         return await prisma.task.create({data: task})
     },
 
-    update: async (id: string, task: Tasks) => {
+    update: async (id: string, task: Partial<Tasks>) => {
         return await prisma.task.update({ where: { id: id}, data: task})
     },
 

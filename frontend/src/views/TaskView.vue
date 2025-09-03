@@ -2,7 +2,7 @@
 
   <section id="task" class="flex h-screen" @click="isAnotherListInputOpen = false">
     <!-- lists -->
-    <draggable class="draggable" v-model="TaskList" group="tasks" item-key="id" @end="onDragEnd">
+    <draggable class="draggable" v-model="tasks" group="tasks" item-key="id" @end="onDragEnd">
       <template #item="{ element }">
         <el-card shadow="never">
           <div class="flex">
@@ -24,7 +24,8 @@
               <el-icon><Delete /></el-icon>
             </button>
           </div>
-          <draggable v-model="element.checklist" group="checklist" item-key="id">
+          <!-- @end="onDragChecklistEnd" -->
+          <draggable v-model="element.checklistItem" group="checklist" item-key="id" >
             <template #item="{ element: item }">
               <div class="draggable-item">
                 <div class="flex-center ">
@@ -35,7 +36,7 @@
 
                   <p @click="viewCardDetails(item)">{{ item.title }}</p>
                 </div>
-                <button @click="handleDelete(element, item)">
+                <button @click="handleDeleteItem(element, item)">
                   <el-icon><Delete /></el-icon>
                 </button>
               </div>
@@ -98,60 +99,77 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import draggable from 'vuedraggable'
-import type { ListItem, ChecklistItem} from "@/types/Task"
+import type { Task, CheckList} from "@/types/Task"
 import { BaseModal as TaskModal } from '@/components'
 import { ElMessage } from 'element-plus'
+import { useTaskStore } from '@/stores/taskStore'
+import { storeToRefs } from 'pinia'
 
+const taskStore = useTaskStore()
+const { tasks } =  storeToRefs(taskStore)
 const isAnotherListInputOpen = ref(false)
 const newListTitle = ref('')
 const isTaskModalOpen = ref(false)
-const selectedItem = ref<ListItem>()
-const selectedCheckListItem = ref<ChecklistItem>()
+const selectedItem = ref<Task>()
+const selectedCheckListItem = ref<CheckList>()
 
-const TaskList = ref<ListItem[]>([
-  {
-    id: 1,
-    title: 'Today',
-    description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-    checklist: [
-      { id: 1, title: 'learn more', description: 'Lorem ipsum dolor sit amet.' , status: "ongoing"},
-      { id: 2, title: 'load more', description: 'Consectetur adipisicing.' , status: "ongoing"},
-    ],
-  },
-  {
-    id: 2,
-    title: 'This Week',
-    description: 'Another list with its own tasks.',
-    checklist: [
-      { id: 3, title: 'setup project', description: 'Initialize repo and config.' , status: "completed"},
-      { id: 4, title: 'install deps', description: 'Run npm install.' , status: "ongoing"},
-    ],
-  },
-])
+onMounted(async () =>{
+  await taskStore.fetchAllTask()
+  console.log(taskStore.getAllTasks)
+})
+
+
 
 // local UI state
-const newCardTitles = ref<Record<number, string>>({})
-const showInputs = ref<Record<number, boolean>>({})
-const showTitle = ref<Record<number, boolean>>({})
+const newCardTitles = ref<Record<string, string>>({})
+const showInputs = ref<Record<string, boolean>>({})
+const showTitle = ref<Record<string, boolean>>({})
 
-function onDragEnd(id: number) {
-  console.log("i will update the data here :" + id)
+async function onDragEnd(evt) {
+  const movedTask = tasks.value[evt.newIndex]
+
+  const prevTask = tasks.value[evt.newIndex - 1] || null
+  const nextTask = tasks.value[evt.newIndex + 1] || null
+
+  let newPos: number
+
+  if (prevTask && nextTask) {
+    newPos = (prevTask.position + nextTask.position) / 2
+  } else if (!prevTask && nextTask) {
+    newPos = nextTask.position - 1 // move to top
+  } else if (prevTask && !nextTask) {
+    newPos = prevTask.position + 1 // move to bottom
+  } else {
+    newPos = 0
+  }
+
+  movedTask.position = newPos
+  await taskStore.updateTask(movedTask.id, { position: newPos })
 }
 
+// async function onDragChecklistEnd(evt) {
+//   const moveTask = tasks.value[evt.nexIndex]
+//   const prevTask = tasks.value[evt.newIndex - 1] || null
+//   const nextTask = tasks.value[evt.newIndex + 1] || null
 
-// async function onDragEnd() {
-//   // send updated order to backend
-//   const updatedOrder = tasks.value.map((task, index) => ({
-//     id: task.id,
-//     position: index
-//   }))
+//   let newPos: number
 
-//   await axios.put("/api/task/reorder", { tasks: updatedOrder })
+//   if (prevTask && nextTask) {
+//     newPos = (prevTask.position + nextTask.position) / 2
+//   } else if (!prevTask && nextTask) {
+//     newPos = nextTask.position - 1 // move to top
+//   } else if (prevTask && !nextTask) {
+//     newPos = prevTask.position + 1 // move to bottom
+//   } else {
+//     newPos = 0
+//   }
+//   movedTask.position = newPos
+//   await taskStore.update
 // }
 
-function onStatusChange(item: ChecklistItem){
+function onStatusChange(item: CheckList){
     item.status = item.status === 'completed' ? 'ongoing' : 'completed'
 }
 
@@ -160,63 +178,55 @@ function editTitle(id: number, title: string) {
   showTitle.value[id] = true
 }
 
-function hideTitleInput(id: number, title: string) {
- if(!title) return
+async function hideTitleInput(id: string, title: string) {
+  if(!title) return
+  await taskStore.updateTask(id, { title: title})
   showTitle.value[id] = false
 }
 
-function addList() {
-  if(!newListTitle.value) return
-
-  TaskList.value.push({
-    id: Date.now(),
-    title: newListTitle.value,
-    description: 'random text',
-    checklist: [],
-  })
-
+async function addList() {
+  if (!newListTitle.value) return
+  let newPos = 0
+  if (tasks.value.length > 0) {
+    const lastTask = tasks.value[tasks.value.length - 1]
+    newPos = lastTask.position + 1
+  }
+  await taskStore.addTask({ title: newListTitle.value, position: newPos })
   newListTitle.value = ''
   isAnotherListInputOpen.value = false
 }
 
-function viewCardDetails(item: ChecklistItem) {
+function viewCardDetails(item: CheckList) {
   if(!item) return ElMessage.error('No Selected Task...')
   isTaskModalOpen.value = true
   selectedCheckListItem.value = item
   console.log('view card details', selectedItem.value)
 }
 
-function addCard(list: ListItem) {
+async function addCard(list: Task) {
   const title = newCardTitles.value[list.id]
   if (!title) return
-
-  list.checklist.push({
-    id: Date.now(),
-    title,
-    description: 'New card',
-    status: "ongoing"
-  })
-
+  await taskStore.addItemOnChecklist(list.id, {title: title, description: "", status: "ongoing"})
   newCardTitles.value[list.id] = ''
   showInputs.value[list.id] = false
 }
 
-function cancelAdd(list: ListItem) {
+function cancelAdd(list: Task) {
   newCardTitles.value[list.id] = ''
   showInputs.value[list.id] = false
 }
 
-function handleDelete(list: ListItem, item: ChecklistItem) {
-  list.checklist = list.checklist.filter((currentItem) => currentItem.id !== item.id)
-
+async function handleDeleteItem(task: Task, item: CheckList) {
+  await taskStore.deleteItemOnCheckList(task.id, item.id)
+  task.checklistItem = task.checklistItem.filter((currentItem) => currentItem.id !== item.id)
 }
 
-watch(TaskList, (newTaskList) => {
+watch(tasks, (newTaskList) => {
   console.log(newTaskList)
 })
 
 watch(
-  TaskList,
+  tasks,
   (newVal) => {
     console.log('TaskList changed:', newVal)
   },

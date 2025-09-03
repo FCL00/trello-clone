@@ -1,6 +1,10 @@
-import type { User, UserResponse} from "./User"
+import type { User} from "./User"
+import type { Response } from "./Response"
+import type { Task, CheckList } from "./Task"
 
 export type {
   User,
-  UserResponse
+  Response,
+  Task,
+  CheckList
 }

@@ -17,9 +17,9 @@ interface FormData {
   password: string
 }
 
-function handleSignIn(formData: FormData){
+async function handleSignIn(formData: FormData){
   const { email, password } = formData
-  authStore.signIn(email, password)
+  await authStore.signIn(email, password)
   console.log(formData)
   router.push('/dashboard')
 }

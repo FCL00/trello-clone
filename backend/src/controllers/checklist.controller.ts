@@ -47,7 +47,8 @@ export const updateItem = async (req: Request, res: Response, next: NextFunction
 
 export const deleteItem = async (req: Request, res: Response, next: NextFunction ) => {
     try { 
-        const { taskId, itemId } = req.params
+       const taskId = req.params.taskId as string
+        const itemId = req.params.itemId as string
         const userId = req.user?.id;
         const task = await TaskService.findById(taskId as string)
 
@@ -55,7 +56,7 @@ export const deleteItem = async (req: Request, res: Response, next: NextFunction
             return errorResponse(res, "Task not found or unauthorized", null, 404)
         }
 
-        await checkListService.delete(itemId as string)
+        await checkListService.delete(taskId, itemId)
         return successResponse(res, "Checklist item deleted", null);
     } catch(error) {
         next(error)

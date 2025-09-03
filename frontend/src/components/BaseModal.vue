@@ -19,10 +19,10 @@
 
 <script lang="ts" setup>
 import  { ref, watch } from "vue"
-import type {  ChecklistItem } from "@/types/Task"
+import type { CheckList } from "@/types/Task"
 
 interface ModalProps {
-  task:  ChecklistItem
+  task:  CheckList
   isOpen: boolean
 }
 

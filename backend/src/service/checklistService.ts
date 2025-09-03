@@ -43,9 +43,9 @@ export const checkListService = {
     },
 
 
-    delete: async (id: string) => {
+    delete: async (taskId: string, id: string) => {
         return await prisma.checkListItem.delete({
-            where: {id: id}
+            where: {id, taskId}
         })
     }
     

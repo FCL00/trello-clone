@@ -11,6 +11,6 @@ taskRouter.get('/:id', getTaskById)
 taskRouter.post('/', createTask)
 taskRouter.patch('/:id', updateTask)
 taskRouter.delete('/:id', deleteTask)
-taskRouter.use("/:taskId/checklists", checkListRouter)
+taskRouter.use("/:taskId/checklists/", checkListRouter)
 
 export default taskRouter

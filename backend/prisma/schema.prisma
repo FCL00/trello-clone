@@ -68,27 +68,28 @@ model RefreshToken {
 model Task{
   id                String            @id @default(cuid())
   userId            String            
-  user              User              @relation(fields: [userId], references: [id])
-  title             String            
-  description       String
-  position          Int               @default(0) 
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title             String 
+  position          Float             @default(0)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
-  startDate         DateTime
-  endDate           DateTime
+  startDate         DateTime?
+  endDate           DateTime?
   status            Status            @default(ongoing)
   checklistItem     CheckListItem []
 }
 model CheckListItem {
   id            String              @id @default(cuid())
   taskId        String
-  task          Task                @relation(fields: [taskId], references: [id])
+  task          Task                @relation(fields: [taskId], references: [id], onDelete: Cascade)
   title         String              
   description   String              
   status        Status              @default(ongoing)
-  position      Int                 @default(0)
+  position      Float               @default(0)
   createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt 
+  updatedAt     DateTime            @updatedAt
+  startDate     DateTime?
+  endDate       DateTime? 
   comments      Comments[]
 }
 
@@ -97,7 +98,7 @@ model Comments {
   checklistItemId String?
   checklistItem   CheckListItem?  @relation(fields: [checklistItemId], references: [id])
   userId          String
-  user            User            @relation(fields: [userId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   comment         String
   createdAt       DateTime        @default(now())
 }

@@ -1,0 +1,72 @@
+.workspace {
+  padding: 1.5rem;
+
+  .workspace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: bold;
+    }
+
+    .add-board {
+      background: #0d6efd;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #0b5ed7;
+      }
+    }
+  }
+
+  .boards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+
+    .board-tile {
+      background: #f4f4f4;
+      border-radius: 6px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      &.new-board {
+        background: #e8f0fe;
+        color: #0d6efd;
+        font-weight: bold;
+
+        span {
+          font-size: 1rem;
+        }
+
+        &:hover {
+          background: #dbe8fd;
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 export interface Tasks {
-  title: string
+  boardId: string
   userId: string
+  title: string  
   description: string
   position: number
   startDate?: Date

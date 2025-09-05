@@ -13,13 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum TableStatuses {
-  active
-  not_active
-  pending
-  approve
-}
-
 enum Status {
   ongoing
   completed
@@ -35,24 +28,88 @@ enum LogTypes {
 }
 
 enum Role {
-  OWNER 
-  ADMIN 
-  MEMBER 
+  OWNER
+  ADMIN
+  MEMBER
   OBSERVER
   USER
 }
 
 model User {
-  id                String           @id @default(cuid())
-  email             String           @unique
-  name              String?
-  password          String
-  role              Role
-  refreshTokens     RefreshToken[]
-  task              Task[]
-  comments          Comments[]             
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  password      String
+  role          Role
+  refreshTokens RefreshToken[]
+  board         Board[]
+  boards        BoardMember[]
+  task          Task[]
+  comments      Comments[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Board {
+  id          String        @id @default(cuid())
+  name        String
+  description String
+  ownerId     String
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members     BoardMember[]
+  tasks       Task[]      
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model BoardMember {
+  id            String        @id @default(cuid())
+  role          Role          @default(MEMBER)
+  boardId       String
+  board         Board         @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id              String            @id @default(cuid())
+  userId          String            
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String
+  position        Float             @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  startDate       DateTime?
+  endDate         DateTime?
+  status          Status            @default(ongoing)
+  checklistItem   CheckListItem[]
+  boardId         String
+  board           Board             @relation(fields: [boardId], references: [id], onDelete: Cascade)
+}
+
+model CheckListItem {
+  id          String     @id @default(cuid())
+  taskId      String
+  task        Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  status      Status     @default(ongoing)
+  position    Float      @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  startDate   DateTime?
+  endDate     DateTime?
+  comments    Comments[]
+}
+
+model Comments {
+  id              String         @id @default(cuid())
+  checklistItemId String?
+  checklistItem   CheckListItem? @relation(fields: [checklistItemId], references: [id])
+  userId          String
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment         String
+  createdAt       DateTime       @default(now())
 }
 
 model RefreshToken {
@@ -63,42 +120,4 @@ model RefreshToken {
   revoked   Boolean  @default(false)
   expiresAt DateTime
   createdAt DateTime @default(now())
-}
-
-model Task{
-  id                String            @id @default(cuid())
-  userId            String            
-  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title             String 
-  position          Float             @default(0)
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  startDate         DateTime?
-  endDate           DateTime?
-  status            Status            @default(ongoing)
-  checklistItem     CheckListItem []
-}
-model CheckListItem {
-  id            String              @id @default(cuid())
-  taskId        String
-  task          Task                @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  title         String              
-  description   String              
-  status        Status              @default(ongoing)
-  position      Float               @default(0)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-  startDate     DateTime?
-  endDate       DateTime? 
-  comments      Comments[]
-}
-
-model Comments {
-  id              String          @id @default(cuid())
-  checklistItemId String?
-  checklistItem   CheckListItem?  @relation(fields: [checklistItemId], references: [id])
-  userId          String
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comment         String
-  createdAt       DateTime        @default(now())
 }

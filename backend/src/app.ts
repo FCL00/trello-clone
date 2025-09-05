@@ -6,6 +6,7 @@ import errorMiddleware from "./middleware/error.middleware.js"
 
 import authRouter from "./routes/auth.routes.js"
 import taskRouter from "./routes/task.routes.js"
+import boardRouter from "./routes/board.routes.js"
 
 import { PORT } from "./config/env.js"
 
@@ -28,6 +29,7 @@ app.use(cookieParser())
 // Routes
 app.use("/api/auth", authRouter)
 app.use('/api/tasks/', taskRouter)
+app.use('/api/boards/', boardRouter)
 
 app.use(errorMiddleware)
 

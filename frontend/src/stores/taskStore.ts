@@ -110,16 +110,28 @@ export const useTaskStore = defineStore('task', {
       }
     },
 
-    async updateItemOnCheckList(taskId: string, itemId: string, item: Partial<CheckList>){
+   async updateItemOnCheckList(taskId: string, itemId: string, item: Partial<CheckList>) {
       try {
-        const response = await updateCheckListItem(taskId, itemId, item)
-        // if(response.success){
-        //   const updatedItem = response.data
-        // }
-      } catch (error){
-        console.error(error)
-        this.error = error instanceof Error ? error.message : 'Unexpected error'
-        ElMessage.error(this.error)
+        const response = await updateCheckListItem(taskId, itemId, item);
+
+        if (!response.success) return;
+
+        const taskIndex = this.tasks.findIndex(task => task.id === taskId);
+        if (taskIndex === -1) return;
+
+        const updatedItem: CheckList = response.data;
+        const checklist = this.tasks[taskIndex].checklistItem;
+
+        if (!Array.isArray(checklist)) return;
+
+        const itemIndex = checklist.findIndex(checkItem => checkItem.id === itemId);
+        if (itemIndex === -1) return;
+
+        this.tasks[taskIndex].checklistItem[itemIndex] = updatedItem;
+      } catch (error) {
+        console.error(error);
+        this.error = error instanceof Error ? error.message : "Unexpected error";
+        ElMessage.error(this.error);
       }
     },
 

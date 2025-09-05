@@ -1,0 +1,33 @@
+
+@use "../variables";
+
+header {
+  position: sticky; // keeps it "stuck" to the top as you scroll
+  top: 0;
+  z-index: 1000; // ensures it stays above page content
+  background-color: #fff; // give it a solid background so content doesn’t bleed through
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #eee;
+
+  // Flexbox utility from your "flex-between" class
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .logo {
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0;
+    }
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+
+    .el-button {
+      font-weight: 500;
+    }
+  }
+}

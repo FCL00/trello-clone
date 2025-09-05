@@ -4,6 +4,24 @@ import { TaskService } from "@/service/taskService.js";
 import { successResponse, errorResponse } from "@/utils/responseHandler.js";
 
 
+export const getItems = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { taskId } = req.params
+    const userId = req.user?.id as string
+
+    const task = await TaskService.findById(taskId as string)
+
+    if (!task || task.userId !== userId) {
+      return errorResponse(res, "Task not found or unauthorized", null, 404)
+    }
+
+    const items = await checkListService.findAllByTask(taskId as string)
+    return successResponse(res, "Checklist items fetched successfully", items)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const createItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const taskId = req.params.taskId as string;

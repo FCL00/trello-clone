@@ -56,9 +56,9 @@ export const addCheckListItem = async (taskId: string, data: Partial<CheckList>)
   }
 }
 
-export const updateCheckListItem = async (taskId: string, id: string, data: Partial<CheckList>): Promise<Response<CheckList>> => {
+export const updateCheckListItem = async (taskId: string, itemId: string, data: Partial<CheckList>): Promise<Response<CheckList>> => {
   try {
-    const res = await api.patch(`${BASE_URL}/tasks/${taskId}/checklists/${id}`, data)
+    const res = await api.patch(`${BASE_URL}/tasks/${taskId}/checklists/${itemId}`, data)
     return res.data
   } catch(error){
     ElMessage.error(error as Error)
@@ -66,9 +66,9 @@ export const updateCheckListItem = async (taskId: string, id: string, data: Part
   }
 }
 
-export const deleteCheckListItem = async (taskId: string, id: string): Promise<Response<CheckList>> => {
+export const deleteCheckListItem = async (taskId: string, itemId: string): Promise<Response<CheckList>> => {
   try{
-    const res = await api.delete(`${BASE_URL}/tasks/${taskId}/checklists/${id}`)
+    const res = await api.delete(`${BASE_URL}/tasks/${taskId}/checklists/${itemId}`)
     return res.data
   } catch(error){
     ElMessage.error(error as Error)

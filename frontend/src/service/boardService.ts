@@ -11,7 +11,7 @@ export const fetchAllBoards = async (): Promise<Response<Boards[]>> => {
   }
 }
 
-export const fetchById = async (boardId: string): Promise<Response<Boards>> => {
+export const fetchById = async (boardId: string): Promise<Response<Board>> => {
   try {
     const res = await api.get(`${BASE_URL}/boards/${boardId}`)
     return res.data
@@ -32,9 +32,9 @@ export const createBoard = async (board: Board): Promise<Response<Board>> => {
 
 
 
-export const updateBoard = async (boardId: string, board: Board) : Promise<Response<Board>> =>{
+export const updateBoard = async (boardId: string, board: Partial<Board>) : Promise<Response<Board>> =>{
   try {
-    const res = await api.post(`${BASE_URL}/boards/${boardId}`, board)
+    const res = await api.patch(`${BASE_URL}/boards/${boardId}`, board)
     return res.data
   } catch(error){
     throw error
@@ -44,7 +44,7 @@ export const updateBoard = async (boardId: string, board: Board) : Promise<Respo
 
 export const deleteBoard = async(boardId: string) : Promise<Response<Board>> => {
   try {
-    const res = await api.post(`${BASE_URL}/boards/${boardId}`)
+    const res = await api.delete(`${BASE_URL}/boards/${boardId}`)
     return res.data
   } catch(error){
     throw error

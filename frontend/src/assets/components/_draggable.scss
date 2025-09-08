@@ -1,54 +1,153 @@
 @use "../variables" as v;
 
-#task{
+.task-board {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
   padding: 20px;
+  background: #f4f5f7;
+  overflow-x: auto;
+  height: calc(100vh - 70px); // leave space for header
 }
 
-.draggable{
-  cursor: pointer;
+.lists {
   display: flex;
-  gap: 12px;
+  gap: 16px;
+}
 
-   h3{
-    max-width: 300px;
-   }
+.list {
+  width: 300px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  max-height: fit-content;
+  overflow-y: auto;
 
-  .el-card{
-    height: fit-content;
-    max-width: 100%;
-  }
-
-   .el-button{
-    font-weight: bold;
-    width: 100%;
-  }
-
-
-  .draggable-item{
-    cursor: pointer;
+  .list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 4px;
-    border: 1px solid #303030;
-    padding: 4px;
-    margin-bottom: 4px;
+    margin-bottom: 12px;
 
-
-    p {
-      width: 300px;
-    }
-
-    button {
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      outline: none;
-      border: none;
-      padding: 4px;
-      border-radius: 4px;
     }
-
   }
 
+  .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s ease;
 
+    &:hover {
+      color: red;
+    }
+  }
 
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .card {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: fit-content;
+
+    .card-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+
+      p {
+        margin: 0;
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  .add-card-btn {
+    font-weight: 500;
+    width: 100%;
+    margin-top: 8px;
+    background: #f0f0f0;
+    border: none;
+
+    &:hover {
+      background: #e4e4e4;
+    }
+  }
+
+  .add-card-input {
+    margin-top: 8px;
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+  }
 }
+
+.new-list {
+  min-width: 300px;
+
+  .new-list-input {
+    margin-bottom: 8px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .add-list-btn {
+    background: #ebecf0;
+    border: none;
+    width: 300px;
+    text-align: left;
+    font-weight: 500;
+
+    &:hover {
+      background: #dcdde1;
+    }
+  }
+}
+
+/* Card and list transitions */
+.card-ghost {
+  opacity: 0.5;
+  border: 2px dashed #409EFF;
+  background-color: #f0f9ff;
+}
+.card-chosen {
+  background-color: #e6f7ff;
+  border: 2px solid #409EFF;
+}
+
+.list-ghost {
+  opacity: 0.5;
+  border: 2px dashed #409EFF;
+  background-color: #f0f9ff;
+}
+.list-chosen {
+  background-color: #e6f7ff;
+  border: 2px solid #409EFF;
+}
+
+

@@ -1,0 +1,45 @@
+#feature {
+  padding: 48px 20px;
+
+  h1 {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; // equal columns
+    align-items: center;
+    gap: 32px;
+  }
+
+  .flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border-left: 6px solid #00bcd4;
+    margin-top: 20px;
+    max-width: 500px; // responsive instead of fixed
+    width: 100%;
+  }
+
+  .feature-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .el-image {
+      width: 100%;
+      height: auto;   // keeps aspect ratio
+      max-width: 600px;
+      object-fit: cover;
+    }
+  }
+}

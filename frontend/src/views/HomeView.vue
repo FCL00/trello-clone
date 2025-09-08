@@ -18,29 +18,26 @@
   </section>
 
   <section id="feature" class="light-blue-gradient">
-    <div class="container">
-      <div style="max-width: 700px; padding: 32px 0px">
+    <div class="container grid">
+      <div class="flex">
         <h1>A productivity powerhouse</h1>
         <p>
-          Simple, flexible, and powerful. All it takes are boards, list, and cards to get a clear view of who's doing what and
-          what needs to get done. Learn more in our <span>guide for getting started</span>
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequuntur ex nemo quos molestiae ipsam nostrum qui
+          reprehenderit eaque ipsa natus?
         </p>
 
-       <div class="grid">
-         <div class="card">
+        <div class="card">
           <h3>Boards</h3>
-          <p>
-            Trello boards keep tasks organized and work moving forward. in a glance, see everything from “things to do” to “aww
-            yeah, we did id!”
-          </p>
+          <p>Trello boards keep tasks organized and work moving forward.</p>
         </div>
-        <div class="">
-          <el-image :src="feature" fit="cover" :lazy="true"/>
-        </div>
-       </div>
+      </div>
+
+      <div class="feature-image">
+        <el-image :src="feature" fit="cover" :lazy="true" />
       </div>
     </div>
   </section>
+  <base-footer/>
 </template>
 
 <script lang="ts" setup>
@@ -48,7 +45,8 @@ import { onMounted } from 'vue'
 import hero from '@/assets/images/hero.png'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import feature from "@/assets/images/feature.png"
+import feature from '@/assets/images/feature.png'
+import BaseFooter from '@/components/BaseFooter.vue'
 
 const authStore = useAuthStore()
 

@@ -32,3 +32,6 @@ export interface Boards extends Board {
   members: Member[]
   owner: Owner
 }
+
+
+export type BoardInput = Pick<Board, "name" | "description">

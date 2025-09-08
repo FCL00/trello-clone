@@ -1,157 +1,121 @@
 import { defineStore } from 'pinia'
-import { findAll, updateTaskById, createTask, deleteTaskById, addCheckListItem, deleteCheckListItem, updateCheckListItem } from '@/service/taskService'
-import type { Task, CheckList } from '@/types'
 import { ElMessage } from 'element-plus'
+import {
+  fetchTasks,
+  fetchTaskById,
+  createTask,
+  updateTask,
+  deleteTask,
+  addItemOnChecklist,
+  updateItemOnChecklist,
+  deleteItemOnChecklist,
+} from '@/service/taskService'
+import type { Task, CheckList } from '@/types'
 
-export const useTaskStore = defineStore('task', {
+export const useTaskStore = defineStore('taskStore', {
   state: () => ({
     tasks: [] as Task[],
-    loading: false as boolean,
-    error: null as string | null,
+    currentTask: null as Task | null,
   }),
 
-  getters: {
-    getAllTasks: (state) => state.tasks,
-  },
-
   actions: {
-    async fetchAllTask() {
+    async fetchAllTask(boardId: string) {
       try {
-        const response = await findAll()
-        if (response.success) {
-          this.tasks = response.data
+        const res = await fetchTasks(boardId)
+        if (res.success) {
+          this.tasks = res.data
         } else {
-          this.error = response.message
-          ElMessage.error(this.error)
+          ElMessage.error(res.message)
         }
-      } catch (error) {
-        this.error = error instanceof Error ? error.message : 'Unexpected error'
-      } finally {
-        this.loading = false
+      } catch (err) {
+        ElMessage.error((err as Error).message)
       }
     },
 
-    async addTask(data: Partial<Task>) {
+    async getTaskById(taskId: string) {
       try {
-        const response = await createTask(data)
-        if (response.success) {
-          this.tasks.push(response.data)
+        const res = await fetchTaskById(taskId)
+        if (res.success) {
+          this.currentTask = res.data
         } else {
-          this.error = response.message
-          ElMessage.error(this.error)
+          ElMessage.error(res.message)
         }
       } catch (error) {
-        console.error(error)
-        this.error = error instanceof Error ? error.message : 'Unexpected error'
-        ElMessage.error(this.error)
+        ElMessage.error((error as Error).message)
       }
     },
 
-    async updateTask(taskId: string, data: Partial<Task>) {
+    async createTask(boardId: string, task: Partial<Task>) {
       try {
-        const response = await updateTaskById(taskId, data)
-        if (response.success) {
+        const res = await createTask(boardId, task)
+        if (res.success) {
+          this.tasks.push(res.data)
+          ElMessage.success(res.message)
+        } else {
+          ElMessage.error(res.message)
+        }
+      } catch (error) {
+        ElMessage.error((error as Error).message)
+      }
+    },
+
+    async updateTask(boardId: string, taskId: string, task: Partial<Task>) {
+      try {
+        const res = await updateTask(boardId, taskId, task)
+        if (res.success) {
           const index = this.tasks.findIndex((t) => t.id === taskId)
-          if (index !== -1) {
-            this.tasks[index] = { ...this.tasks[index], ...response.data }
-          }
+          if (index !== -1) this.tasks[index] = res.data
+          ElMessage.success(res.message)
         } else {
-          this.error = response.message
-          ElMessage.error(this.error)
+          ElMessage.error(res.message)
         }
       } catch (error) {
-        console.error(error)
-        this.error = error instanceof Error ? error.message : 'Unexpected error'
-        ElMessage.error(this.error)
-      } finally {
-        this.loading = false
+        ElMessage.error((error as Error).message)
       }
     },
 
     async deleteTask(taskId: string) {
       try {
-        const response = await deleteTaskById(taskId)
-        if (response.success) {
-          this.tasks = this.tasks.filter((task) => task.id !== taskId)
-          ElMessage.success('Successfully deleted a task')
+        const res = await deleteTask(taskId)
+        if (res.success) {
+          this.tasks = this.tasks.filter((t) => t.id !== taskId)
+          ElMessage.success(res.message)
         } else {
-          this.error = response.message
-          ElMessage.error(this.error)
+          ElMessage.error(res.message)
         }
       } catch (error) {
-        console.error(error)
-        this.error = error instanceof Error ? error.message : 'Unexpected error'
-        ElMessage.error(this.error)
-      } finally {
-        this.loading = false
+        ElMessage.error((error as Error).message)
       }
     },
 
-
-    async addItemOnChecklist(taskId: string, item:  Partial<CheckList>){
-      try {
-        const response = await addCheckListItem(taskId, item)
-
-        if(response.success) {
-          const newItem = response.data
-          const index = this.tasks.findIndex((task: Task) => task.id === taskId)
-          if (index !== -1 && newItem) {
-            this.tasks[index].checklistItem.push(newItem)
-          }
-        } else {
-          this.error = response.message
-          ElMessage.error(this.error)
+    async addItemOnChecklist(boardId: string, taskId: string, payload: Partial<CheckList>) {
+      const res = await addItemOnChecklist(boardId, taskId, payload)
+      if (res.success && res.data) {
+        const task = this.tasks.find((t) => t.id === taskId)
+        if (task) {
+          task.checklistItem.push(res.data)
         }
-
-      } catch(error){
-        console.error(error)
-        this.error = error instanceof Error ? error.message : 'Unexpected error'
-        ElMessage.error(this.error)
+        return res.data
+      } else {
+        ElMessage.error(res.message)
       }
     },
 
-   async updateItemOnCheckList(taskId: string, itemId: string, item: Partial<CheckList>) {
-      try {
-        const response = await updateCheckListItem(taskId, itemId, item);
-
-        if (!response.success) return;
-
-        const taskIndex = this.tasks.findIndex(task => task.id === taskId);
-        if (taskIndex === -1) return;
-
-        const updatedItem: CheckList = response.data;
-        const checklist = this.tasks[taskIndex].checklistItem;
-
-        if (!Array.isArray(checklist)) return;
-
-        const itemIndex = checklist.findIndex(checkItem => checkItem.id === itemId);
-        if (itemIndex === -1) return;
-
-        this.tasks[taskIndex].checklistItem[itemIndex] = updatedItem;
-      } catch (error) {
-        console.error(error);
-        this.error = error instanceof Error ? error.message : "Unexpected error";
-        ElMessage.error(this.error);
+    async updateItemOnCheckList(boardId: string, taskId: string, itemId: string, payload: Partial<CheckList>) {
+      const updatedItem = await updateItemOnChecklist(boardId, taskId, itemId, payload)
+      const task = this.tasks.find((t) => t.id === taskId)
+      if (task) {
+        const idx = task.checklistItem.findIndex((i) => i.id === itemId)
+        if (idx !== -1) task.checklistItem[idx] = { ...task.checklistItem[idx], ...updatedItem }
       }
     },
 
-    async deleteItemOnCheckList(taskId: string, itemId: string){
-      try{
-        const response = await deleteCheckListItem(taskId, itemId)
-        if(response.success){
-          const index = this.tasks.findIndex((task) => task.id === taskId)
-          if (index !== -1) {
-            this.tasks[index].checklistItem.filter(item => item.id !== itemId)
-          }
-        } else {
-          this.error = response.message
-          ElMessage.error(this.error)
-        }
-
-      } catch(error){
-        console.error(error)
+    async deleteItemOnCheckList(boardId: string, taskId: string, itemId: string) {
+      await deleteItemOnChecklist(boardId, taskId, itemId)
+      const task = this.tasks.find((t) => t.id === taskId)
+      if (task) {
+        task.checklistItem = task.checklistItem.filter((i) => i.id !== itemId)
       }
-    }
-
+    },
   },
 })

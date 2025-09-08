@@ -9,12 +9,12 @@ export const checkListService = {
   },
 
   findAllByTask: async (taskId: string) => {
-  return await prisma.checkListItem.findMany({
-    where: { taskId },
-    orderBy: { position: "asc" },
-    include: { comments: true }
-  })
-},
+    return await prisma.checkListItem.findMany({
+      where: { taskId },
+      orderBy: { position: "asc" },
+      include: { comments: true },
+    });
+  },
 
   findById: async (id: string) => {
     return await prisma.checkListItem.findUnique({
@@ -38,35 +38,29 @@ export const checkListService = {
         title: item.title,
         description: item.description,
         status: item.status ?? "ongoing",
-        position: nextPos, 
+        position: nextPos,
         task: { connect: { id: taskId } },
       },
     });
   },
 
+  
   update: async (id: string, item: Partial<ChecklistItem>) => {
     return await prisma.checkListItem.update({
       where: { id },
       data: {
         ...(item.title !== undefined && { title: item.title }),
-        ...(item.description !== undefined && {
-          description: item.description,
-        }),
+        ...(item.description !== undefined && { description: item.description }),
         ...(item.status !== undefined && { status: item.status }),
-        ...(item.taskId !== undefined && {
-          task: { connect: { id: item.taskId } },
-        }),
-        ...(item.position !== undefined && { position: item.position }), 
-        ...(item.taskId !== undefined && {
-          task: { connect: { id: item.taskId } },
-        }),
+        ...(item.position !== undefined && { position: item.position }),
+        ...(item.taskId !== undefined && { taskId: item.taskId }), // ✅ allow moving between tasks
       },
     });
   },
 
-  delete: async (taskId: string, id: string) => {
+  delete: async (id: string) => {
     return await prisma.checkListItem.delete({
-      where: { id, taskId },
+      where: { id },
     });
   },
 };

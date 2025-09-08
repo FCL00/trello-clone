@@ -1,24 +1,27 @@
-
-@use "../variables";
-
-header {
-  position: sticky; // keeps it "stuck" to the top as you scroll
+.app-header {
+  position: sticky;
   top: 0;
-  z-index: 1000; // ensures it stays above page content
-  background-color: #fff; // give it a solid background so content doesn’t bleed through
+  z-index: 1000;
+  background-color: #fff;
   padding: 1rem 2rem;
   border-bottom: 1px solid #eee;
 
-  // Flexbox utility from your "flex-between" class
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   .logo {
     h1 {
-      font-size: 1.5rem;
-      font-weight: bold;
+      font-size: 1.6rem;
+      font-weight: 700;
       margin: 0;
+      color: #0065FF;
+      letter-spacing: -0.5px;
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
     }
   }
 
@@ -26,8 +29,32 @@ header {
     display: flex;
     align-items: center;
 
-    .el-button {
+    .user-btn {
+      border-radius: 24px;
+      padding: 0.5rem 1.2rem;
       font-weight: 500;
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #111;
+
+      &:hover {
+        background-color: #f3f4f6;
+      }
+    }
+  }
+}
+
+// ✅ Responsive (mobile header)
+@media (max-width: 768px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    nav {
+      margin-top: 0.5rem;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
     }
   }
 }
